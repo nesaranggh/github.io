@@ -1755,6 +1755,7 @@
       <div class="btn-row" style="margin-bottom:12px;">
         <button class="btn btn-soft btn-sm" onclick="selectHolesPreset('all')">전체 36홀</button>
         <button class="btn btn-soft btn-sm" onclick="selectHolesPreset('AB')">A·B코스 (18홀)</button>
+        <button class="btn btn-soft btn-sm" onclick="selectHolesPreset('ABC')">A·B·C (27홀)</button>
         <button class="btn btn-soft btn-sm" onclick="selectHolesPreset('CD')">C·D코스 (18홀)</button>
         <button class="btn btn-outline btn-sm" onclick="selectHolesPreset('none')">모두 해제</button>
       </div>
@@ -3049,6 +3050,7 @@ function selectHolesPreset(mode) {
   if (mode === "all") state.holes = initDefaultHoles();
   else if (mode === "AB") state.holes = initDefaultHoles().filter(h => h[0] === "A" || h[0] === "B");
   else if (mode === "CD") state.holes = initDefaultHoles().filter(h => h[0] === "C" || h[0] === "D");
+  else if (mode === "ABC") state.holes = initDefaultHoles().filter(h => h[0] === "A" || h[0] === "B" || h[0] === "C");
   else state.holes = [];
   saveState();
   renderHoles();
