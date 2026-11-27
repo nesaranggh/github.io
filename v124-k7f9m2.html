@@ -8658,6 +8658,8 @@ function renderStrategies() {
   }
   strategyVoicePaint();
   const list = (STRATEGY_DB.courses || []).filter(strategyMatch);
+  /* v1.27 : 오늘 추천(★) 구장을 목록 맨 위로 */
+  list.sort(function (a, b) { return (b.pick ? 1 : 0) - (a.pick ? 1 : 0); });
   box.innerHTML = list.length ? list.map(strategyCardJsonSafe).join("") : '<div class="card"><div class="stg-empty">🔍 찾는 구장이 없습니다.<br>구장 이름이나 지역을 짧게 넣어 보세요.</div></div>';
   if (cnt) cnt.textContent = list.length + "개 구장" + (strategyQuery ? " · “" + strategyQuery + "”" : "");
   stgPlayButtons();
