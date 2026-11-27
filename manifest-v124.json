@@ -1,0 +1,25 @@
+{
+  "name": "파크골프 AI 프로",
+  "short_name": "파크골프PRO",
+  "start_url": "/github.io/v124-k7f9m2.html",
+  "scope": "/github.io/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#06111d",
+  "theme_color": "#0b1b2b",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "icon-v124.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-v124.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
