@@ -2001,7 +2001,7 @@
           <button class="stg-vbtn" data-voice="m" onclick="setStrategyVoice('m')">👨 남성 성우 (인준)</button>
           <button class="stg-vbtn" data-voice="f" onclick="setStrategyVoice('f')">👩 여성 성우 (선희)</button>
         </div>
-        <p class="stg-voice-note" id="stgVoiceNote">지금 성우: 남성 인준</p>
+        <p class="stg-voice-note" id="stgVoiceNote">지금 성우: 남성 인준 · 전체 듣기와 MP3가 이 성우로 나갑니다</p>
       </div>
       <button class="btn btn-primary" style="width:100%; margin:0 0 9px; min-height:44px; font-size:14px; background:linear-gradient(135deg,#f59e0b,#b45309); border:0;" onclick="openAiCaddy()">🎙️ AI 캐디에게 “이순신 B5번 홀 러프인데 다음 샷?” 물어보기</button>
       <div class="stg-regions" id="stgRegions"></div>
@@ -8123,9 +8123,9 @@ function strategyVoicePaint() {
     btns[i].classList.toggle("on", btns[i].getAttribute("data-voice") === strategyVoice);
   }
   const note = document.getElementById("stgVoiceNote");
-  if (note) note.textContent = "지금 성우: " + strategyVoiceName(strategyVoice) + " · 구장 전체 듣기와 MP3 저장이 이 성우로 나갑니다.";
+  if (note) note.textContent = "지금 성우: " + strategyVoiceName(strategyVoice) + " · 전체 듣기와 MP3가 이 성우로 나갑니다. (폰이 직접 읽을 때는 음높이로 맞춥니다)";
   const aiNote = document.getElementById("aiVoiceNote");
-  if (aiNote) aiNote.textContent = "지금 성우: " + strategyVoiceName(strategyVoice) + " · 공략 음성과 MP3도 같은 성우입니다.";
+  if (aiNote) aiNote.textContent = "지금 성우: " + strategyVoiceName(strategyVoice) + " · 코스 공략 음성·MP3에 적용됩니다.";
 }
 function setStrategyVoice(g) {
   strategyVoice = g === "f" ? "f" : "m";
