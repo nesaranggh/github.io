@@ -8727,7 +8727,7 @@ const AI_QUICK_CHIPS = [
   "이순신 코스 공략",
   "이순신 B5번 홀",
   "양평누리 A1번 홀",
-  "화천 산천어 공략"
+  "하양 물빛 A9번 홀"
 ];
 
 /* ---- 5) 말로 물어도 알아듣게 하는 동의어 ---- */
@@ -10189,7 +10189,12 @@ function schQuizReset() {
 }
 
 /* ================= v1.27 : 📊 성적표 AI 진단 · 1분 처방 ================= */
+const AI_RX_COURSE_KEY = "parkgolf_ai_rx_course_v127";
 let rxState = { name: "", slug: "hayang-mulbit", p3: "", p4: "", p5: "", ob: 0 };
+try {
+  const _rxk = localStorage.getItem(AI_RX_COURSE_KEY);
+  if (_rxk && strategyBySlug(_rxk)) rxState.slug = _rxk;
+} catch (e) {}
 
 function aiRxOverText(r, c) {
   const map = [["a", "A"], ["b", "B"], ["c", "C"], ["d", "D"]];
@@ -10245,6 +10250,7 @@ function openAiRx(name) {
 function aiRxChange() {
   const el = document.getElementById("aiRxCourse");
   if (el) rxState.slug = el.value;
+  try { localStorage.setItem(AI_RX_COURSE_KEY, rxState.slug); } catch (e) {}
   aiRxRender();
 }
 function aiRxOb(d) {
