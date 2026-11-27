@@ -1209,6 +1209,20 @@
     50% { box-shadow: 0 0 0 11px rgba(190, 18, 60, 0.0); }
   }
 
+  .ai-mic-hint {
+    margin: 0 0 8px; border: 1.5px solid #f59e0b; background: #fffbeb; border-radius: 12px;
+    padding: 10px 11px; color: #7c2d12;
+  }
+  .ai-mic-hint .hd { font-size: 13.5px; font-weight: 900; color: #b45309; margin-bottom: 5px; line-height: 1.35; }
+  .ai-mic-hint .bd { font-size: 12.5px; line-height: 1.65; font-weight: 700; color: #78350f; }
+  .ai-mic-hint .bd b { color: #7c2d12; }
+  .ai-mic-hint .acts { display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap; }
+  .ai-mic-hint .acts button {
+    border: 0; border-radius: 9px; min-height: 40px; padding: 0 11px; font-size: 12.5px;
+    font-weight: 900; font-family: inherit; cursor: pointer; background: #065f46; color: #fff;
+  }
+  .ai-mic-hint .acts button.ghost { background: #fff; color: #b45309; border: 1.5px solid #f59e0b; }
+
   .ai-voice-row { display: flex; gap: 6px; margin-top: 8px; }
   .ai-mini {
     flex: 1;
@@ -1434,6 +1448,33 @@
   .stg-mp3 { background: #fef3c7; color: #7c2d12; border: 1.5px solid #fbbf24; }
   .stg-empty { text-align: center; padding: 26px 10px; color: #64748b; font-size: 14px; font-weight: 800; }
   .stg-note { font-size: 12px; color: #475569; line-height: 1.6; margin: 8px 0 0; font-weight: 700; }
+
+  /* ================= v1.25a : 📻 전체 연속 듣기 플레이어 ================= */
+  .stg-playall {
+    width: 100%; min-height: 50px; margin: 0 0 10px; border: 0; border-radius: 13px;
+    background: linear-gradient(135deg,#fde68a,#f59e0b 55%,#b45309); color: #3b1d00;
+    font-size: 15px; font-weight: 900; font-family: inherit; cursor: pointer; letter-spacing: -.4px;
+    box-shadow: 0 3px 0 rgba(0,0,0,.18);
+  }
+  .stg-playall:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.18); }
+  .stg-player {
+    position: sticky; top: 4px; z-index: 40; display: none; flex-direction: column; gap: 7px;
+    background: linear-gradient(135deg,#0f766e,#065f46); color: #fff; border: 2.5px solid #fbbf24;
+    border-radius: 14px; padding: 10px 11px; margin: 0 0 10px; box-shadow: 0 6px 18px rgba(2,44,34,.4);
+  }
+  .stg-player.on { display: flex; }
+  .stg-player-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .stg-player-now { font-size: 13.5px; font-weight: 900; line-height: 1.35; letter-spacing: -.3px; }
+  .stg-player-time { font-size: 11.5px; font-weight: 900; color: #bbf7d0; white-space: nowrap; }
+  .stg-player-bar { height: 7px; border-radius: 99px; background: rgba(255,255,255,.3); overflow: hidden; }
+  .stg-player-bar i { display: block; height: 100%; width: 0%; background: #fbbf24; transition: width .25s linear; }
+  .stg-player-btns { display: grid; grid-template-columns: 1.15fr .85fr .85fr; gap: 6px; }
+  .stg-player-btns button {
+    border: 0; border-radius: 10px; min-height: 42px; font-size: 13px; font-weight: 900;
+    font-family: inherit; cursor: pointer; background: #ecfdf5; color: #065f46;
+  }
+  .stg-player-btns button.stg-pstop { background: #fee2e2; color: #991b1b; }
+  .stg-btn[data-stg-play].playing { background: #b91c1c; color: #fff; border-color: #fca5a5; }
 </style>
 </head>
 <body>
@@ -1841,13 +1882,27 @@
 
   <!-- TAB 8: ⛳ 전국 코스 공략 (v1.25 신규) -->
   <div id="tab-strategy" class="panel">
+    <div class="stg-player" id="stgPlayer">
+      <div class="stg-player-top">
+        <div class="stg-player-now" id="stgPlayerNow" aria-live="polite">현재 재생 중: —</div>
+        <div class="stg-player-time" id="stgPlayerTime">0:00</div>
+      </div>
+      <div class="stg-player-bar"><i id="stgPlayerBar"></i></div>
+      <div class="stg-player-btns">
+        <button id="stgPlayPauseBtn" onclick="stgPlayerTogglePause()">⏸ 일시정지</button>
+        <button onclick="stgPlayerNext()">⏭ 다음</button>
+        <button class="stg-pstop" onclick="stgPlayerStop(true)">⏹ 멈춤</button>
+      </div>
+    </div>
+
     <div class="card stg-head-card">
       <div class="card-title">
         <span>⛳ 전국 파크골프 코스 공략</span>
         <span class="fact-ver" style="background:#fef3c7;color:#7c2d12;">v1.25</span>
       </div>
       <p class="stg-lead">처음 가는 구장·시합·자격시험 전에 코스부터 익히세요. <b>23개 구장</b>의 코스 구성·홀별 거리·공략 포인트를 담았습니다. 카드마다 <b>복사 · 텍스트 저장 · 음성 듣기 · MP3 저장</b>이 됩니다.</p>
-      <button class="btn btn-primary" style="width:100%; margin:0 0 10px; min-height:44px; font-size:14px; background:linear-gradient(135deg,#f59e0b,#b45309); border:0;" onclick="openAiCaddy()">🎙️ AI 캐디에게 “이순신 코스 공략” 물어보기</button>
+      <button class="btn btn-primary" style="width:100%; margin:0 0 8px; min-height:44px; font-size:14px; background:linear-gradient(135deg,#f59e0b,#b45309); border:0;" onclick="openAiCaddy()">🎙️ AI 캐디에게 “이순신 코스 공략” 물어보기</button>
+      <button class="stg-playall" id="stgPlayAllBtn" onclick="startStrategyPlayAll()">📻 전체 연속 듣기 (23곳)</button>
       <div class="stg-regions" id="stgRegions"></div>
       <div class="stg-search">
         <input type="search" id="stgSearchInput" placeholder="구장 이름·지역으로 찾기 (예: 이순신)" oninput="onStrategySearch(this.value)">
@@ -2238,6 +2293,7 @@ function switchTab(name) {
   if (name === "notices") renderNoticePreview();
   if (name === "facts") renderFacts();
   if (name === "strategy") renderStrategies();
+  else { try { if (STG_PLAYER.i >= 0) stgPlayerStop(false); } catch (e) {} }
   if (name !== "notices") stopNoticeAnimation();
   window.scrollTo({ top: 0, behavior: "auto" });
 }
@@ -7921,11 +7977,256 @@ function saveStrategyTxt(slug) {
   triggerTextDownload(c.name.replace(/\s+/g, "_") + "_코스공략.txt", strategyBriefText(c, true), "text/plain;charset=utf-8");
   showToast("텍스트 파일(.txt)로 저장했습니다. 다운로드 폴더를 확인하세요.");
 }
+/* ================= v1.25a : 📻 코스 공략 전체·연속 듣기 플레이어 =================
+   MP3(audio/<slug>.mp3)를 먼저 쓰고, 로드가 안 되면(오프라인·구형 폰) speechSynthesis로 자동 대체합니다. */
+const STG_PLAYER = { list: [], i: -1, mode: "", gen: 0, audio: null, paused: false, tts: false, dur: 0 };
+
+function stgFilteredList() {
+  return (STRATEGY_DB.courses || []).filter(strategyMatch);
+}
+function stgFmtSec(s) {
+  s = Math.max(0, Math.floor(s || 0));
+  const m = Math.floor(s / 60), r = s % 60;
+  return m + ":" + (r < 10 ? "0" : "") + r;
+}
+function stgPlayerRender() {
+  const box = document.getElementById("stgPlayer");
+  const now = document.getElementById("stgPlayerNow");
+  const tg = document.getElementById("stgPlayPauseBtn");
+  const cur = (STG_PLAYER.i >= 0 && STG_PLAYER.list[STG_PLAYER.i]) ? STG_PLAYER.list[STG_PLAYER.i] : null;
+  if (box) box.classList.toggle("on", !!cur);
+  if (cur && now) {
+    const seq = STG_PLAYER.mode === "all" ? " (" + (STG_PLAYER.i + 1) + "/" + STG_PLAYER.list.length + ")" : "";
+    now.textContent = "📻 현재 재생 중: " + cur.name + seq + (STG_PLAYER.tts ? " · 음성 안내" : "");
+  }
+  if (tg) tg.textContent = STG_PLAYER.paused ? "▶ 이어 듣기" : "⏸ 일시정지";
+  stgPlayerProgress(STG_PLAYER.tts ? null : undefined);
+  stgSyncCardButtons();
+  stgSyncPlayAllBtn();
+}
+function stgPlayerProgress(cur, dur) {
+  const bar = document.getElementById("stgPlayerBar");
+  const tm = document.getElementById("stgPlayerTime");
+  if (cur === null) {
+    if (bar) bar.style.width = "0%";
+    if (tm) tm.textContent = "읽는 중";
+    return;
+  }
+  if (cur === undefined) return;
+  const pct = dur > 0 ? Math.min(100, (cur / dur) * 100) : 0;
+  if (bar) bar.style.width = pct.toFixed(1) + "%";
+  if (tm) tm.textContent = dur > 0 ? stgFmtSec(cur) + " / " + stgFmtSec(dur) : stgFmtSec(cur);
+  const curC = (STG_PLAYER.i >= 0 && STG_PLAYER.list[STG_PLAYER.i]) ? STG_PLAYER.list[STG_PLAYER.i] : null;
+  if (curC && typeof document.querySelector === "function") {
+    const b = document.querySelector('[data-stg-play="' + curC.slug + '"]');
+    if (b) b.textContent = STG_PLAYER.paused ? "▶ 이어 듣기" : ("⏹ 듣기 멈춤 " + stgFmtSec(cur));
+  }
+}
+function stgSyncCardButtons() {
+  const cur = (STG_PLAYER.i >= 0 && STG_PLAYER.list[STG_PLAYER.i]) ? STG_PLAYER.list[STG_PLAYER.i].slug : "";
+  const all = document.querySelectorAll("[data-stg-play]");
+  for (let i = 0; i < all.length; i++) {
+    const b = all[i];
+    const on = !!cur && b.getAttribute("data-stg-play") === cur;
+    b.classList.toggle("playing", on);
+    b.textContent = on ? (STG_PLAYER.paused ? "▶ 이어 듣기" : "⏹ 듣기 멈춤") : "🔊 음성 듣기";
+  }
+}
+function stgSyncPlayAllBtn(n) {
+  const b = document.getElementById("stgPlayAllBtn");
+  if (!b) return;
+  if (typeof n !== "number") n = stgFilteredList().length;
+  const on = STG_PLAYER.i >= 0 && STG_PLAYER.mode === "all";
+  b.textContent = on
+    ? "⏹ 연속 듣기 멈춤 (" + (STG_PLAYER.i + 1) + "/" + STG_PLAYER.list.length + ")"
+    : "📻 전체 연속 듣기 (" + n + "곳)";
+}
+
+function startStrategyPlayAll() {
+  if (STG_PLAYER.i >= 0 && STG_PLAYER.mode === "all") { stgPlayerStop(true); return; }
+  const list = stgFilteredList();
+  if (!list.length) {
+    showToast("지금 조건에 맞는 구장이 없습니다. 지역·검색어를 풀어 보세요.");
+    return;
+  }
+  stgPlayerStart(list, 0, "all");
+  showToast(list.length + "곳 코스 공략을 차례차례 들려 드립니다.");
+}
+
+function stgPlayerStart(list, i, mode) {
+  list = list || [];
+  if (!list.length) return;
+  STG_PLAYER.list = list.slice();
+  STG_PLAYER.mode = mode || "all";
+  STG_PLAYER.i = -1;
+  stgGo(i || 0);
+}
+
+function stgGo(i) {
+  const list = STG_PLAYER.list;
+  if (i < 0 || i >= list.length) { stgPlayerFinish(); return; }
+  STG_PLAYER.i = i;
+  STG_PLAYER.paused = false;
+  STG_PLAYER.tts = false;
+  STG_PLAYER.dur = 0;
+  const gen = ++STG_PLAYER.gen;
+  stgPlayerProgress(0, 0);
+  stgPlayerRender();
+  stgPlayOne(list[i], gen);
+}
+
+function stgPlayOne(c, gen) {
+  try {
+    let a = STG_PLAYER.audio;
+    if (!a) { a = new Audio(); a.preload = "auto"; STG_PLAYER.audio = a; }
+    a.onended = null; a.onerror = null; a.ontimeupdate = null; a.onloadedmetadata = null;
+    try { a.pause(); } catch (e) {}
+    a.src = strategyAudioUrl(c.slug);
+    a.ontimeupdate = function () {
+      if (gen !== STG_PLAYER.gen) return;
+      stgPlayerProgress(a.currentTime, a.duration || STG_PLAYER.dur || 0);
+    };
+    a.onloadedmetadata = function () {
+      if (gen !== STG_PLAYER.gen) return;
+      STG_PLAYER.dur = a.duration || 0;
+      stgPlayerProgress(a.currentTime, a.duration || 0);
+    };
+    a.onended = function () {
+      if (gen !== STG_PLAYER.gen) return;
+      stgNextInChain();
+    };
+    a.onerror = function () {
+      if (gen !== STG_PLAYER.gen) return;
+      stgPlayTts(c, gen);
+    };
+    const p = a.play();
+    if (p && typeof p.catch === "function") {
+      p.catch(function () {
+        if (gen !== STG_PLAYER.gen) return;
+        stgPlayTts(c, gen);
+      });
+    }
+  } catch (e) {
+    stgPlayTts(c, gen);
+  }
+}
+
+function stgPlayTts(c, gen) {
+  if (gen !== STG_PLAYER.gen) return;
+  const tm = document.getElementById("stgPlayerTime");
+  if (!aiCaddyTtsSupported()) {
+    showToast("이 브라우저에서는 소리를 낼 수 없습니다. 카드의 [🎧 음성 파일 저장]을 눌러 주세요.");
+    stgPlayerStop(false);
+    return;
+  }
+  try {
+    const a = STG_PLAYER.audio;
+    if (a) { try { a.pause(); } catch (e) {} }
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(strategySpeakText(c));
+    u.lang = "ko-KR";
+    u.rate = 0.94; u.pitch = 1.02; u.volume = 1;
+    aiCaddyVoiceObj = aiCaddyPickVoice() || aiCaddyVoiceObj;
+    if (aiCaddyVoiceObj) u.voice = aiCaddyVoiceObj;
+    STG_PLAYER.tts = true;
+    STG_PLAYER.paused = false;
+    u.onend = function () {
+      if (gen !== STG_PLAYER.gen) return;
+      stgNextInChain();
+    };
+    u.onerror = function (ev) {
+      if (gen !== STG_PLAYER.gen) return;
+      const code = ev && ev.error ? ev.error : "";
+      if (code === "not-allowed") {
+        STG_PLAYER.paused = true;
+        stgPlayerRender();
+        showToast("브라우저가 소리를 막았습니다. [▶ 이어 듣기]를 눌러 주세요.");
+      } else if (code !== "interrupted" && code !== "canceled") {
+        stgNextInChain();
+      }
+    };
+    window.speechSynthesis.speak(u);
+    stgPlayerRender();
+    if (tm) tm.textContent = "읽는 중";
+  } catch (e) {
+    showToast("음성을 열지 못했습니다. 카드의 [🎧 음성 파일 저장]을 눌러 주세요.");
+    stgPlayerStop(false);
+  }
+}
+
+function stgNextInChain() {
+  if (STG_PLAYER.i < 0) return;
+  if (STG_PLAYER.mode === "single") { stgPlayerStop(false); showToast("코스 공략 듣기가 끝났습니다."); return; }
+  if (STG_PLAYER.i + 1 >= STG_PLAYER.list.length) { stgPlayerFinish(); return; }
+  stgGo(STG_PLAYER.i + 1);
+}
+function stgPlayerNext() {
+  if (STG_PLAYER.i < 0) return;
+  if (STG_PLAYER.i + 1 >= STG_PLAYER.list.length) {
+    if (STG_PLAYER.list.length > 1) showToast("마지막 구장입니다. [⏹ 멈춤]을 눌러 주세요.");
+    else stgPlayerStop(true);
+    return;
+  }
+  stgGo(STG_PLAYER.i + 1);
+}
+function stgPlayerFinish() {
+  const n = STG_PLAYER.list.length;
+  stgPlayerStop(false);
+  if (n > 1) showToast(n + "곳 코스 공략을 끝까지 다 들었습니다.");
+}
+function stgPlayerTogglePause() {
+  if (STG_PLAYER.i < 0) return;
+  if (STG_PLAYER.tts) {
+    try {
+      if (STG_PLAYER.paused) window.speechSynthesis.resume();
+      else window.speechSynthesis.pause();
+      STG_PLAYER.paused = !STG_PLAYER.paused;
+    } catch (e) {}
+    stgPlayerRender();
+    return;
+  }
+  const a = STG_PLAYER.audio;
+  if (!a) return;
+  if (STG_PLAYER.paused) {
+    STG_PLAYER.paused = false;
+    const p = a.play();
+    if (p && typeof p.catch === "function") p.catch(function () { showToast("다시 재생하지 못했습니다. [⏭ 다음]을 눌러 주세요."); });
+  } else {
+    try { a.pause(); } catch (e) {}
+    STG_PLAYER.paused = true;
+  }
+  stgPlayerRender();
+}
+function stgPlayerStop(showMsg) {
+  STG_PLAYER.gen++;
+  const a = STG_PLAYER.audio;
+  if (a) {
+    a.onended = null; a.onerror = null; a.ontimeupdate = null; a.onloadedmetadata = null;
+    try { a.pause(); } catch (e) {}
+    try { a.removeAttribute("src"); a.load(); } catch (e) {}
+  }
+  try { if (aiCaddyTtsSupported()) window.speechSynthesis.cancel(); } catch (e) {}
+  STG_PLAYER.list = []; STG_PLAYER.i = -1; STG_PLAYER.mode = "";
+  STG_PLAYER.paused = false; STG_PLAYER.tts = false; STG_PLAYER.dur = 0;
+  const box = document.getElementById("stgPlayer");
+  if (box) box.classList.remove("on");
+  stgPlayerProgress(0, 0);
+  stgSyncCardButtons();
+  stgSyncPlayAllBtn();
+  if (showMsg) showToast("코스 공략 듣기를 멈췄습니다.");
+}
+
+/* 구장 카드의 [🔊 음성 듣기] : MP3 우선, 실패하면 TTS */
 function playStrategyTts(slug) {
   const c = strategyBySlug(slug); if (!c) return;
-  if (!aiCaddyTtsSupported()) { showToast("이 브라우저는 음성 읽기를 지원하지 않습니다. [🎧 음성 파일 저장]을 눌러 주세요."); return; }
-  speakAiCaddy(strategySpeakText(c), true);
-  showToast("코스 공략을 음성으로 읽어 드립니다.");
+  const cur = (STG_PLAYER.i >= 0 && STG_PLAYER.list[STG_PLAYER.i]) ? STG_PLAYER.list[STG_PLAYER.i] : null;
+  if (cur && cur.slug === slug) {
+    if (STG_PLAYER.paused) { stgPlayerTogglePause(); return; }
+    stgPlayerStop(true);
+    return;
+  }
+  stgPlayerStart([c], 0, "single");
+  showToast(c.name + " 코스 공략을 들려 드립니다.");
 }
 function saveStrategyMp3(slug) {
   const c = strategyBySlug(slug); if (!c) return;
@@ -8007,7 +8308,7 @@ function strategyCardHtml(c) {
     '<div class="stg-btns">' +
       '<button class="stg-btn stg-copy" onclick="copyStrategy(\'' + c.slug + '\')">📋 공략 복사</button>' +
       '<button class="stg-btn stg-txt" onclick="saveStrategyTxt(\'' + c.slug + '\')">💾 텍스트 저장(.txt)</button>' +
-      '<button class="stg-btn stg-tts" onclick="playStrategyTts(\'' + c.slug + '\')">🔊 음성 듣기</button>' +
+      '<button class="stg-btn stg-tts" data-stg-play="' + c.slug + '" onclick="playStrategyTts(\'' + c.slug + '\')">🔊 음성 듣기</button>' +
       '<button class="stg-btn stg-mp3" onclick="saveStrategyMp3(\'' + c.slug + '\')">🎧 음성 파일 저장(.mp3)</button>' +
     '</div></div>';
 }
@@ -8025,6 +8326,8 @@ function renderStrategies() {
   const list = (STRATEGY_DB.courses || []).filter(strategyMatch);
   box.innerHTML = list.length ? list.map(strategyCardJsonSafe).join("") : '<div class="card"><div class="stg-empty">🔍 찾는 구장이 없습니다.<br>구장 이름이나 지역을 짧게 넣어 보세요.</div></div>';
   if (cnt) cnt.textContent = list.length + "개 구장" + (strategyQuery ? " · “" + strategyQuery + "”" : "");
+  stgSyncPlayAllBtn(list.length);
+  stgSyncCardButtons();
 }
 function strategyCardJsonSafe(c) { return strategyCardHtml(c); }
 
@@ -8426,12 +8729,78 @@ function setAiMicState(on) {
   if (label && aiCaddySrCtor()) label.textContent = on ? "듣는 중… 다시 누르면 멈춤" : "눌러서 말하기";
 }
 
-function aiCaddySrFail(msg) {
+function aiMicHintClose() {
+  const n = document.getElementById("aiMicHint");
+  if (n && n.parentNode) n.parentNode.removeChild(n);
+}
+function showAiMicHint(head, bodyHtml) {
+  const ans = document.getElementById("aiCaddyAnswer");
+  if (!ans) return;
+  aiMicHintClose();
+  const d = document.createElement("div");
+  d.className = "ai-mic-hint";
+  d.id = "aiMicHint";
+  d.innerHTML = '<div class="hd">' + factEsc(head) + "</div>" +
+    '<div class="bd">' + bodyHtml + "</div>" +
+    '<div class="acts">' +
+      '<button onclick="aiMicFocusInput()">⌨️ 입력칸에 글로 쓰기</button>' +
+      '<button class="ghost" onclick="aiMicCopyUrl()">🔗 주소 복사(크롬용)</button>' +
+      '<button class="ghost" onclick="aiMicHintClose()">닫기</button>' +
+    "</div>";
+  ans.insertBefore(d, ans.firstChild);
+  try { d.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
+}
+function aiMicFocusInput() {
+  const inp = document.getElementById("aiCaddyInput");
+  if (inp) { try { inp.focus(); inp.click(); } catch (e) {} }
+  showToast("입력칸을 눌렀습니다. 키보드 위 🎤 버튼으로 말씀해 주세요.");
+}
+function aiMicCopyUrl() {
+  let url = "";
+  try { url = location.href.split("#")[0]; } catch (e) {}
+  const done = function (ok) {
+    if (ok) { showToast("주소를 복사했습니다. 크롬(Chrome) 주소창에 붙여넣어 열어 보세요."); return; }
+    const ans = document.getElementById("aiCaddyAnswer");
+    if (ans) {
+      const ta = document.createElement("textarea");
+      ta.value = url; ta.readOnly = true; ta.rows = 2;
+      ta.style.cssText = "width:100%;margin-top:8px;font-size:12px;padding:8px;border:1.5px solid #f59e0b;border-radius:10px;";
+      ans.insertBefore(ta, ans.firstChild);
+      try { ta.select(); } catch (e) {}
+    }
+    showToast("브라우저가 복사를 막았습니다. 위 주소를 길게 눌러 복사해 주세요.");
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function () { done(true); }).catch(function () { done(fallbackCopyText(url)); });
+  } else { done(fallbackCopyText(url)); }
+}
+function aiCaddySrFail(msg, head, body) {
   setAiMicState(false);
+  showAiMicHint(head || "🎙️ 마이크를 열지 못했습니다", body || factEsc(msg));
   showToast(msg);
   const inp = document.getElementById("aiCaddyInput");
   if (inp) { try { inp.focus(); } catch (e) {} }
 }
+function aiCaddyMicBrowser() {
+  let ua = "";
+  try { ua = String(navigator.userAgent || ""); } catch (e) {}
+  return {
+    samsung: /SamsungBrowser/i.test(ua),
+    chrome: /Chrome\//.test(ua) && !/SamsungBrowser|EdgA|EdgiOS|OPR\/|Whale\/|NAVER\(inapp/i.test(ua),
+    android: /Android/i.test(ua)
+  };
+}
+function aiCaddyMicPermission() {
+  return new Promise(function (resolve) {
+    try {
+      if (!navigator.permissions || !navigator.permissions.query) { resolve("unknown"); return; }
+      navigator.permissions.query({ name: "microphone" }).then(function (st) {
+        resolve((st && st.state) || "unknown");
+      }).catch(function () { resolve("unknown"); });
+    } catch (e) { resolve("unknown"); }
+  });
+}
+const AI_MIC_TAIL = "아래 입력칸을 누른 뒤 키보드 위 🎤 버튼으로 말씀하셔도 됩니다.";
 
 function startAiCaddyListening() {
   if (window.isSecureContext === false || location.protocol === "file:" || location.protocol === "content:") {
@@ -8440,7 +8809,7 @@ function startAiCaddyListening() {
     if (ans) {
       ans.innerHTML = `<div class="ai-ans-card">
         <div class="ai-ans-head"><span class="ai-ans-cat">🎙️ 말로 묻는 방법 안내</span></div>
-        <div class="ai-ans-body">폰에 저장된 파일에서는 삼성 인터넷 보안 정책상 이 버튼의 마이크가 잠겨 있습니다.<br><br><b>👉 대신 아래 입력칸을 눌러 키보드를 띄운 뒤, 키보드 위 🎤(마이크) 버튼을 눌러 말씀해 보세요!</b><br>(또는 아래 질문 칩을 누르시면 바로 음성으로 읽어 드립니다.)</div>
+        <div class="ai-ans-body">지금 이 화면은 <b>폰에 저장된 파일</b>이라 https 보안 주소가 아닙니다. 이때는 브라우저가 마이크를 잠급니다.<br><br><b>👉 대신 아래 입력칸을 눌러 키보드를 띄운 뒤, 키보드 위 🎤(마이크) 버튼을 눌러 말씀해 보세요!</b><br>(또는 아래 질문 칩을 누르시면 바로 음성으로 읽어 드립니다.)</div>
       </div>`;
     }
     const inp = document.getElementById("aiCaddyInput");
@@ -8449,8 +8818,13 @@ function startAiCaddyListening() {
     return;
   }
   const Ctor = aiCaddySrCtor();
+  const env = aiCaddyMicBrowser();
   if (!Ctor) {
-    aiCaddySrFail("이 브라우저는 음성 인식을 지원하지 않습니다. 아래 칸에 글로 적어 주시면 바로 답해 드립니다.");
+    aiCaddySrFail(
+      "이 브라우저에는 음성 인식 기능이 없습니다. 아래 칸에 글로 적어 주세요.",
+      "🎙️ 이 브라우저에는 음성 인식 기능이 없습니다",
+      "주소는 https 보안 주소인데 이 브라우저가 음성 인식(SpeechRecognition)을 제공하지 않습니다.<br><b>👉 크롬(Chrome)에서 같은 주소를 열면 바로 됩니다.</b> " + AI_MIC_TAIL
+    );
     return;
   }
   if (aiCaddyListening) {
@@ -8459,14 +8833,37 @@ function startAiCaddyListening() {
     return;
   }
   stopAiCaddySpeech(false);
+  if (env.samsung) {
+    showAiMicHint(
+      "🎙️ 삼성 인터넷에서는 음성 인식이 막히는 일이 많습니다",
+      "지금도 시도해 봅니다. 잠시 뒤 “듣는 중…”으로 바뀌지 않으면 <b>크롬(Chrome)</b>으로 여는 것이 가장 확실합니다.<br>" + AI_MIC_TAIL
+    );
+  }
+  aiCaddyMicPermission().then(function (perm) {
+    if (perm === "denied") {
+      aiCaddySrFail(
+        "마이크 권한이 꺼져 있습니다. 사이트 설정에서 마이크를 허용해 주세요.",
+        "🎙️ 마이크 권한이 거부되어 있습니다",
+        "이 사이트의 마이크 사용이 <b>차단</b>으로 저장돼 있습니다. 주소창 왼쪽 자물쇠(ⓘ) → <b>권한 → 마이크 → 허용</b>으로 바꾼 뒤 다시 눌러 주세요.<br>" + AI_MIC_TAIL
+      );
+      return;
+    }
+    aiCaddyStartRecognition(Ctor);
+  });
+}
+
+function aiCaddyStartRecognition(Ctor) {
   let finished = false;
+  let started = false;
+  let watchdog = null;
+  const clearWd = function () { if (watchdog) { clearTimeout(watchdog); watchdog = null; } };
   try {
     const rec = new Ctor();
     rec.lang = "ko-KR";
     rec.interimResults = true;
     rec.continuous = false;
     rec.maxAlternatives = 1;
-    rec.onstart = function () { setAiMicState(true); };
+    rec.onstart = function () { started = true; clearWd(); setAiMicState(true); };
     rec.onresult = function (ev) {
       let finalText = "";
       let interim = "";
@@ -8475,12 +8872,14 @@ function startAiCaddyListening() {
         if (r.isFinal) finalText += r[0].transcript;
         else interim += r[0].transcript;
       }
+      started = true; clearWd();
       const label = document.getElementById("aiMicLabel");
       if (interim && label && !finalText) label.textContent = "듣는 중… " + interim.slice(-16);
       if (finalText && !finished) {
         finished = true;
         const text = finalText.trim();
         setAiMicState(false);
+        aiMicHintClose();
         try { rec.stop(); } catch (e) {}
         const inp = document.getElementById("aiCaddyInput");
         if (inp) inp.value = "";
@@ -8489,30 +8888,81 @@ function startAiCaddyListening() {
     };
     rec.onerror = function (ev) {
       finished = true;
+      clearWd();
       setAiMicState(false);
       const code = ev && ev.error ? ev.error : "";
+      const env2 = aiCaddyMicBrowser();
       if (code === "not-allowed" || code === "service-not-allowed") {
-        aiCaddySrFail("마이크 사용이 막혀 있습니다. 주소창 옆 자물쇠(사이트 설정)에서 마이크를 허용하시거나, 아래 칸에 글로 적어 주세요.");
-      } else if (code === "no-speech") {
-        aiCaddySrFail("잘 듣지 못했습니다. 마이크를 다시 누르고 또렷하게 말씀해 주세요.");
+        aiCaddySrFail(
+          "마이크 사용이 막혀 있어 음성 인식을 시작하지 못했습니다.",
+          "🎙️ 음성 인식이 차단되었습니다 (not-allowed)",
+          "삼성 인터넷이 음성 인식을 막았거나, 이 사이트의 마이크 권한이 거부된 상태입니다.<br><b>👉 크롬(Chrome) 브라우저로 같은 주소를 열거나,</b> " + AI_MIC_TAIL
+        );
       } else if (code === "audio-capture") {
-        aiCaddySrFail("마이크를 찾지 못했습니다. 마이크가 연결돼 있는지 확인해 주세요.");
+        aiCaddySrFail(
+          "마이크를 찾지 못했습니다. 다른 앱이 마이크를 쓰고 있는지 확인해 주세요.",
+          "🎙️ 마이크를 찾지 못했습니다 (audio-capture)",
+          "폰에 마이크가 없거나, 통화·녹음·음성메모 앱이 마이크를 쓰고 있습니다. 그 앱을 끄고 다시 눌러 주세요.<br>" + AI_MIC_TAIL
+        );
       } else if (code === "network") {
-        aiCaddySrFail("음성 인식 서버에 연결하지 못했습니다. 인터넷 없이 쓰시려면 아래 칸에 직접 적어 주세요.");
-      } else if (code !== "aborted") {
-        aiCaddySrFail("음성 인식을 마치지 못했습니다. 아래 칸에 글로 적어 주세요.");
+        aiCaddySrFail(
+          "음성 인식 서버에 연결하지 못했습니다. 인터넷 연결을 확인해 주세요.",
+          "🎙️ 음성 인식 서버 연결 실패 (network)",
+          "삼성 인터넷에서 구글 음성 서비스로 연결이 막히면 이 오류가 납니다. 와이파이·데이터를 확인하고 <b>크롬(Chrome)</b>으로 열어 보세요. 인터넷 없이도 쓰시려면 " + AI_MIC_TAIL
+        );
+      } else if (code === "no-speech") {
+        aiCaddySrFail(
+          "잘 듣지 못했습니다. 마이크를 다시 누르고 또렷하게 말씀해 주세요.",
+          "🎙️ 소리가 잘 들어오지 않았습니다 (no-speech)",
+          "마이크를 누른 뒤 1~2초 기다렸다가 폰을 입 가까이 대고 또렷하게 말씀해 주세요. " + AI_MIC_TAIL
+        );
+      } else if (code === "language-not-supported") {
+        aiCaddySrFail(
+          "이 브라우저가 한국어 음성 인식을 지원하지 않습니다.",
+          "🎙️ 한국어 음성 인식 미지원 (language-not-supported)",
+          "크롬(Chrome)에서 열면 한국어로 바로 말할 수 있습니다. " + AI_MIC_TAIL
+        );
+      } else if (code === "aborted") {
+        /* 사용자가 직접 멈춘 경우 — 안내를 띄우지 않습니다. */
+      } else {
+        aiCaddySrFail(
+          "음성 인식을 마치지 못했습니다. 아래 칸에 글로 적어 주세요.",
+          "🎙️ 음성 인식을 마치지 못했습니다" + (code ? " (" + code + ")" : ""),
+          (env2.samsung ? "삼성 인터넷에서는 음성 인식이 자주 막힙니다. <b>크롬(Chrome)</b>으로 열어 보세요.<br>" : "") + AI_MIC_TAIL
+        );
       }
     };
     rec.onend = function () {
+      clearWd();
       aiCaddyRecognition = null;
       setAiMicState(false);
     };
     aiCaddyRecognition = rec;
+    watchdog = setTimeout(function () {
+      if (finished || started) return;
+      finished = true;
+      try { rec.abort(); } catch (e) {}
+      aiCaddyRecognition = null;
+      const env3 = aiCaddyMicBrowser();
+      aiCaddySrFail(
+        "음성 인식이 시작되지 않았습니다. 크롬으로 열거나 입력칸을 써 주세요.",
+        "🎙️ 음성 인식이 시작되지 않았습니다 (응답 없음)",
+        (env3.samsung
+          ? "삼성 인터넷은 구글 음성 서비스가 막혀 있으면 버튼을 눌러도 <b>아무 안내 없이 조용히 멈춥니다.</b><br>"
+          : "브라우저가 마이크를 열지 못했습니다.<br>") +
+        "<b>👉 크롬(Chrome) 브라우저로 같은 주소를 열면 바로 됩니다.</b> " + AI_MIC_TAIL
+      );
+    }, 6000);
     rec.start();
     setAiMicState(true);
   } catch (e) {
+    clearWd();
     aiCaddyRecognition = null;
-    aiCaddySrFail("음성 인식을 열지 못했습니다. 아래 칸에 글로 적어 주시면 바로 답해 드립니다.");
+    aiCaddySrFail(
+      "음성 인식을 열지 못했습니다. 아래 칸에 글로 적어 주시면 바로 답해 드립니다.",
+      "🎙️ 음성 인식을 열지 못했습니다",
+      "이 브라우저가 음성 인식 시작을 거부했습니다. <b>크롬(Chrome)</b>으로 열거나 " + AI_MIC_TAIL
+    );
   }
 }
 
