@@ -8570,9 +8570,9 @@ function aiCaddyCardHtml(it, idx) {
     '<div class="ai-card-btns">' +
       '<button class="ai-mini on" onclick="aiCaddyReplay(' + idx + ')">🔊 다시 듣기</button>' +
       '<button class="ai-mini" onclick="aiCaddyCopy(' + idx + ')">💬 카톡 복사</button>' +
-      (it.slug ? '<button class="ai-mini" onclick="saveStrategyTxt(\'' + it.slug + '\')">💾 텍스트 저장</button>' +
-                 '<button class="ai-mini" onclick="saveStrategyMp3(\'' + it.slug + '\')">🎧 음성 파일 저장</button>' +
-                 '<button class="ai-mini" onclick="openStrategy(\'' + it.slug + '\')">📖 8.공략에서 보기</button>' : "") +
+      (it.slug ? '<button class="ai-mini" onclick="saveStrategyTxt(\'' + it.slug + '\')">💾 텍스트</button>' +
+                 '<button class="ai-mini" onclick="saveStrategyMp3(\'' + it.slug + '\')">🎧 MP3 저장</button>' +
+                 '<button class="ai-mini" onclick="openStrategy(\'' + it.slug + '\')">📖 공략 탭</button>' : "") +
     "</div></div>";
 }
 
