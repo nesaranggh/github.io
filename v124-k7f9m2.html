@@ -9337,7 +9337,7 @@ const AI_SIT_WORDS = [
   { k: "옆바람", re: /옆바람|옆바|측풍|옆에서\s*바람/ },
   { k: "나무", re: /나무|수목|장애물|조경/ },
   { k: "물·해저드", re: /해저드|연못|물에|도랑|개울|워터/ },
-  { k: "OB 근처", re: /ob|오비|아웃\s*근처/ },
+  { k: "OB 근처", re: /ob|오비|아웃\s*근처|그린\s*뒤/ },
   { k: "페어웨이", re: /페어웨이|중앙에\s*있|좋은\s*자리/ }
 ];
 
@@ -9474,7 +9474,9 @@ function aiNextShotLines(c, h, sit) {
   if (has("맞바람")) L.push("🌬️ 바람: 맞바람은 백스윙 한 단계 크게, 공은 낮게. 방향이 흔들리면 방향부터 잡습니다.");
   else if (has("뒷바람")) L.push("🌬️ 바람: 뒷바람은 공이 더 갑니다. 한 단계 줄이고 그린 뒤를 조심합니다.");
   else if (has("옆바람")) L.push("🌬️ 바람: 옆바람은 바람 부는 쪽으로 조금 겨냥합니다.");
-  if (has("OB 근처")) L.push("🛡️ 안전: OB 라인 가까이 있습니다. 다음 샷은 무조건 코스 안쪽으로, 힘 70%.");
+  if (has("OB 근처")) L.push(pos === "페어웨이"
+    ? "🛡️ 안전: 뒤·옆 OB가 걱정되면 그린을 넘기지 말고 한 뼘 짧게, 힘 70%로 코스 안쪽만 봅니다."
+    : "🛡️ 안전: OB 라인 가까이 있습니다. 다음 샷은 무조건 코스 안쪽으로, 힘 70%.");
   else if (has("나무")) L.push("🛡️ 안전: 나무는 넘기지 말고 옆으로 빼서 각도를 만듭니다.");
   else if (has("물·해저드")) L.push("🛡️ 안전: 물·도랑은 넘기려 하지 말고 앞에서 끊습니다.");
   else L.push("🛡️ 안전: " + (h.m >= 100 ? "OB가 걱정되면 그린을 직접 노리지 말고 두 번에 나눠 갑니다." : "그린을 넘기지 않게 한 뼘 짧게."));
@@ -9519,7 +9521,7 @@ function aiHoleCardHtml(it, idx) {
   const lines = (it.lines || []).map(function (l) { return "<li>" + factEsc(l) + "</li>"; }).join("");
   return '<div class="ai-card">' +
     '<div class="ai-card-head"><span class="ai-cat">' + factEsc(it.icon + " " + it.cat) + "</span>" +
-      (idx === 0 ? '<span class="ai-best">지금 상황 기준</span>' : "") + "</div>" +
+      (idx === 0 ? '<span class="ai-best">' + (it.sit ? "지금 상황 기준" : "홀 제원") + "</span>" : "") + "</div>" +
     '<div class="ai-card-title">' + factEsc(it.title) + "</div>" +
     '<ul class="ai-card-body">' + lines + "</ul>" +
     (it.ref ? '<div class="ai-card-ref">근거 · ' + factEsc(it.ref) + "</div>" : "") +
@@ -9557,7 +9559,7 @@ function aiAnswerHole(c, hole, sit, q, fromVoice) {
     title: (sit ? "다음 샷 · " : "") + hole.cl + " " + hole.h + "번 · 파" + hole.par + " · " + hole.m + "m",
     lines: lines,
     ref: "8.공략 · " + c.name + " / " + (c.verified || "홀별 표"),
-    slug: c.slug, ckey: hole.c, h: hole.h,
+    slug: c.slug, ckey: hole.c, h: hole.h, sit: !!sit,
     cname: c.name, holeLabel: hole.cl + " " + hole.h + "번 홀"
   };
   aiCaddyLastAnswer = [it];
